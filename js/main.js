@@ -4,7 +4,8 @@ const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', '
 
 // Build a 'master' deck of 'card' objects used to create shuffled decks
 const masterDeck = buildMasterDeck();
-renderDeckInContainer(masterDeck, document.getElementById('master-deck-container'));
+// renderDeckInContainer(masterDeck, document.getElementById('master-deck-container'));
+renderDealerHand(masterDeck, document.getElementById('master-deck-container'));
 
 /*----- app's state (variables) -----*/
 let shuffledDeck;
@@ -14,8 +15,11 @@ const shuffledContainer = document.getElementById('shuffled-deck-container');
 
 /*----- event listeners -----*/
 document.querySelector('button').addEventListener('click', renderShuffledDeck);
+// document.querySelector('button').addEventListener('click', deal);
 
 /*----- functions -----*/
+
+
 function renderShuffledDeck() {
   // Create a copy of the masterDeck (leave masterDeck untouched!)
   const tempDeck = [...masterDeck];
@@ -26,7 +30,10 @@ function renderShuffledDeck() {
     // Note the [0] after splice - this is because splice always returns an array and we just want the card object in that array
     shuffledDeck.push(tempDeck.splice(rndIdx, 1)[0]);
   }
-  renderDeckInContainer(shuffledDeck, shuffledContainer);
+  // renderDeckInContainer(shuffledDeck, shuffledContainer);
+  // deal(){
+  //   return this.deck.pop();
+  // }
 }
 
 function renderDeckInContainer(deck, container) {
@@ -36,6 +43,17 @@ function renderDeckInContainer(deck, container) {
   const cardsHtml = deck.reduce(function(html, card) {
     return html + `<div class="card ${card.face}"></div>`;
   }, '');
+  container.innerHTML = cardsHtml;
+}
+
+function renderDealerHand(deck, container) {
+  container.innerHTML = '';
+  // Let's build the cards as a string of HTML
+  // Use reduce when you want to 'reduce' the array into a single thing - in this case a string of HTML markup 
+  const cardsHtml = `<div class="card ${deck.pop().face}"></div>`;
+  // (function(html, card) {
+  //   return html + `<div class="card ${card.face}"></div>`;
+  // }, '');
   container.innerHTML = cardsHtml;
 }
 
@@ -54,5 +72,6 @@ function buildMasterDeck() {
   });
   return deck;
 }
+
 
 renderShuffledDeck();
