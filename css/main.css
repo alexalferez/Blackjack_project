@@ -30,7 +30,7 @@ html, * {
     border-radius: 4px;
     outline: none;
   }
-  
+
   button:hover {
     background-color: grey;
     color: white;
