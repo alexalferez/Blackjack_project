@@ -4,7 +4,7 @@ const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', '
 
 // Build a 'master' deck of 'card' objects used to create shuffled decks
 const masterDeck = buildMasterDeck();
-// renderDeckInContainer(masterDeck, document.getElementById('master-deck-container'));
+
 
 /*----- app's state (variables) -----*/
 let shuffledDeck = renderShuffledDeck();
@@ -15,8 +15,7 @@ const playerContainer = document.getElementById('shuffled-deck-container');
 const dealerContainer = document.getElementById('master-deck-container');
 // const dealerContainer = document.getElementById('dealer-deck-container');
 /*----- event listeners -----*/
-// document.querySelector('button').addEventListener('click', renderShuffledDeck);
-// document.querySelector('button').addEventListener('click', deal);
+
 /*----- functions -----*/
 
 
@@ -37,45 +36,100 @@ function renderShuffledDeck() {
 function getValue(hand)
 {
   let hold = 0;
+  let check = 0;
 
   for(i = 0; i < hand.length; i++)
   {
     hold += hand[i].value;
+    
+    if(hand[i].value === 11)
+      check += 1;
+    
+    if(hold > 21 && check > 0)
+      hold -= (10*check--);
   }
-
-  return hold;
+    return hold;
 }
 
 function deal()
 {
   while(dealerHand.pop());
   while(playerHand.pop());
+
+  shuffledDeck = renderShuffledDeck();
+
   renderDealerHand(shuffledDeck, dealerContainer);
   renderPlayerHand(shuffledDeck, playerContainer);
 
   console.log(getValue(dealerHand));
   console.log(getValue(playerHand));
+
+  document.getElementById("Hit").disabled = false;
+  document.getElementById("Stand").disabled = false;
+
+  document.getElementById("results").innerText = ("Player: " + getValue(playerHand) + "     Dealer: " + getValue(dealerHand));
 }
 
 function newPlayerCard(deck, container){
-  let cardB = deck.pop()
-  const cardsHtml = `<div class="card ${cardB.face}"></div>`;
+  let cardB = deck.pop();
+  const cardsHtml = `<div class="card ${cardB.face}"></div>`
   container.innerHTML += cardsHtml;
 
   playerHand.push(cardB);
 }
 
+function newDealerCard(deck, container)
+{
+  let card = deck.pop();
 
+  dealerHand.push(card);
+
+  const cardsHtml = `<div class="card ${dealerHand[0].face}"></div>`
+                  + `<div class="card ${card.face}"></div>`;
+  
+  container.innerHTML = cardsHtml;
+
+  while( (getValue(dealerHand) < getValue(playerHand)) && (getValue(dealerHand) < 21) )
+  {
+    let cardTemp = deck.pop();
+    
+    container.innerHTML += `<div class="card ${cardTemp.face}"></div>`;
+    dealerHand.push(cardTemp);
+  }
+
+  if(getValue(dealerHand) > 21)
+  {
+    document.getElementById("results").innerText = ("Dealer: " + getValue(dealerHand) + " Dealer Busts, You Win!");
+    document.getElementById("Hit").disabled = true;
+    document.getElementById("Stand").disabled = true;
+  }
+  else
+  {
+    document.getElementById("results").innerText = ("Player: " + getValue(playerHand) + "     Dealer: " + getValue(dealerHand) + " You Lose!");
+    document.getElementById("Hit").disabled = true;
+    document.getElementById("Stand").disabled = true;
+  }
+}
 
 function hit(){
   newPlayerCard(shuffledDeck, playerContainer);
-  console.log(getValue(playerHand));
-
+  if(getValue(playerHand) <= 21 )
+    document.getElementById("results").innerText = ("Player: " + getValue(playerHand) + "     Dealer: " + getValue(dealerHand));
+  else
+  {
+    document.getElementById("results").innerText = ("Player: " + getValue(playerHand) + "     Player bust play again");
+    document.getElementById("Hit").disabled = true;
+    document.getElementById("Stand").disabled = true;
+  }
 }
 
-function stand(){
-  console.log(value.dealer);
-  console.log(value.player);
+function stand()
+{
+  console.log(getValue(playerHand));
+  console.log(getValue(dealerHand));
+
+  newDealerCard(shuffledDeck, dealerContainer);
+
 }
 
 function renderDeckInContainer(deck, container) {
@@ -93,13 +147,13 @@ function renderDealerHand(deck, container) {
   container.innerHTML = '';
   // Let's build the cards as a string of HTML
   // Use reduce when you want to 'reduce' the array into a single thing - in this case a string of HTML markup 
-  let card = deck.pop();
+  let card;
+  if(deck.length)
+    card = deck.pop();
   dealerHand.push(card);
   const cardsHtml = `<div class="card ${card.face}"></div>`
                   + `<div class="card back-red"></div>`;
-  // (function(html, card) {
-  //   return html + `<div class="card ${card.face}"></div>`;
-  // }, '');
+
   container.innerHTML = cardsHtml;
 }
 
@@ -116,9 +170,7 @@ function renderPlayerHand(deck, container) {
 
   const cardsHtml = `<div class="card ${cardA.face}"></div>`
                   + `<div class="card ${cardB.face}"></div>`;
-  // (function(html, card) {
-  //   return html + `<div class="card ${card.face}"></div>`;
-  // }, '');
+
   container.innerHTML = cardsHtml;
 }
 
@@ -138,5 +190,3 @@ function buildMasterDeck() {
   return deck;
 }
 
-
-// renderShuffledDeck();
