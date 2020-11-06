@@ -25,4 +25,4 @@ by Alejandro Alferez
 * If the deal wins you'll get a message that the Dealer won play again.
 
 Please click this link to play the game.
-
+[](https://alexalferez.github.io/Blackjack_project/)
