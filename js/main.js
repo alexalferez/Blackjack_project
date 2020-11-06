@@ -13,12 +13,9 @@ let dealerHand = [];
 /*----- cached element references -----*/
 const playerContainer = document.getElementById('shuffled-deck-container');
 const dealerContainer = document.getElementById('master-deck-container');
-// const dealerContainer = document.getElementById('dealer-deck-container');
-/*----- event listeners -----*/
-
 /*----- functions -----*/
 
-
+// original shuffled deck
 function renderShuffledDeck() {
   // Create a copy of the masterDeck (leave masterDeck untouched!)
   const tempDeck = [...masterDeck];
@@ -32,7 +29,7 @@ function renderShuffledDeck() {
 
   return shuffledDeck;
 }
-
+// here I need to get the values of the cards and wether 21 is 1 or 11
 function getValue(hand)
 {
   let hold = 0;
@@ -52,7 +49,7 @@ function getValue(hand)
   }
     return hold;
 }
-
+// here is the deal function that push the cards up to there deck container
 function deal()
 {
   while(dealerHand.pop());
@@ -68,7 +65,7 @@ function deal()
 
   document.getElementById("results").innerText = ("Player: " + getValue(playerHand) + "     Dealer: " + getValue(dealerHand));
 }
-
+// this feature adds a new card to the player 
 function newPlayerCard(deck, container){
   let cardB = deck.pop();
   const cardsHtml = `<div class="card ${cardB.face}"></div>`
@@ -76,7 +73,7 @@ function newPlayerCard(deck, container){
 
   playerHand.push(cardB);
 }
-
+// this adds to the dealer hand and has the most of win loss logic of the game
 function newDealerCard(deck, container)
 {
   let card = deck.pop();
@@ -87,7 +84,7 @@ function newDealerCard(deck, container)
                   + `<div class="card ${card.face}"></div>`;
   
   container.innerHTML = cardsHtml;
-
+// here we compare our player hand to our dealer hand and add a message if win , tie or dealer won
   while( (getValue(dealerHand) < getValue(playerHand)) && (getValue(dealerHand) < 21) )
   {
     let cardTemp = deck.pop();
@@ -121,7 +118,7 @@ function newDealerCard(deck, container)
     document.getElementById("Stand").disabled = true;
   }
 }
-
+// here we have our hit function that place another card om the player deck using newPayerCard funtion and has loss message if we exceed
 function hit(){
   newPlayerCard(shuffledDeck, playerContainer);
   if(getValue(playerHand) <= 21 )
@@ -133,17 +130,15 @@ function hit(){
     document.getElementById("Stand").disabled = true;
   }
 }
-
+// our stand function pushes a card on to the dealer hand 
 function stand()
 {
   newDealerCard(shuffledDeck, dealerContainer);
 }
 
-
+// initial dealer hand
 function renderDealerHand(deck, container) {
   container.innerHTML = '';
-  // Let's build the cards as a string of HTML
-  // Use reduce when you want to 'reduce' the array into a single thing - in this case a string of HTML markup 
   let card;
   if(deck.length)
     card = deck.pop();
@@ -154,11 +149,9 @@ function renderDealerHand(deck, container) {
   container.innerHTML = cardsHtml;
 }
 
-
+// initial player hand
 function renderPlayerHand(deck, container) {
   container.innerHTML = '';
-  // Let's build the cards as a string of HTML
-  // Use reduce when you want to 'reduce' the array into a single thing - in this case a string of HTML markup 
   let cardA = deck.pop();
   let cardB = deck.pop();
 
@@ -170,7 +163,7 @@ function renderPlayerHand(deck, container) {
 
   container.innerHTML = cardsHtml;
 }
-
+// master deck
 function buildMasterDeck() {
   const deck = [];
   // Use nested forEach to generate card objects
