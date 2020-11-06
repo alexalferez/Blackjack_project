@@ -43,10 +43,12 @@ function getValue(hand)
     hold += hand[i].value;
     
     if(hand[i].value === 11)
-      check += 1;
+      check++;
     
-    if(hold > 21 && check > 0)
-      hold -= (10*check--);
+    if(hold > 21 && check){
+      hold -= 10;
+      check--;
+    }
   }
     return hold;
 }
@@ -60,9 +62,6 @@ function deal()
 
   renderDealerHand(shuffledDeck, dealerContainer);
   renderPlayerHand(shuffledDeck, playerContainer);
-
-  console.log(getValue(dealerHand));
-  console.log(getValue(playerHand));
 
   document.getElementById("Hit").disabled = false;
   document.getElementById("Stand").disabled = false;
@@ -103,9 +102,21 @@ function newDealerCard(deck, container)
     document.getElementById("Hit").disabled = true;
     document.getElementById("Stand").disabled = true;
   }
+  else if(getValue(dealerHand) > getValue(playerHand))
+  {
+    document.getElementById("results").innerText = ("Player: " + getValue(playerHand) + "     Dealer: " + getValue(dealerHand) + " Dealer won, Play again");
+    document.getElementById("Hit").disabled = true;
+    document.getElementById("Stand").disabled = true;
+  }
+  else if(getValue(dealerHand) === getValue(playerHand))
+  {
+    document.getElementById("results").innerText = ("Player: " + getValue(playerHand) + "     Dealer: " + getValue(dealerHand) + " Push!");
+    document.getElementById("Hit").disabled = true;
+    document.getElementById("Stand").disabled = true;
+  }
   else
   {
-    document.getElementById("results").innerText = ("Player: " + getValue(playerHand) + "     Dealer: " + getValue(dealerHand) + " You Lose!");
+  document.getElementById("results").innerText = ("Player: " + getValue(playerHand) + "     Dealer: " + getValue(dealerHand) + " You Win!");
     document.getElementById("Hit").disabled = true;
     document.getElementById("Stand").disabled = true;
   }
@@ -125,21 +136,7 @@ function hit(){
 
 function stand()
 {
-  console.log(getValue(playerHand));
-  console.log(getValue(dealerHand));
-
   newDealerCard(shuffledDeck, dealerContainer);
-
-}
-
-function renderDeckInContainer(deck, container) {
-  container.innerHTML = '';
-  // Let's build the cards as a string of HTML
-  // Use reduce when you want to 'reduce' the array into a single thing - in this case a string of HTML markup 
-  const cardsHtml = deck.reduce(function(html, card) {
-    return html + `<div class="card ${card.face}"></div>`;
-  }, '');
-  container.innerHTML = cardsHtml;
 }
 
 
